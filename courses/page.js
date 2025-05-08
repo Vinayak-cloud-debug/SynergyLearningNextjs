@@ -130,14 +130,14 @@ useEffect(() => {
 
     <ProtectedRoute redirectTo = '/'>
 
-<div className="w-full h-full bg-[#090707] ">
+<div className="w-full h-full bg-gradient-to-br from-[#0d0d0d] via-[#1a1a1a] to-[#000000]  ">
 
     
     <motion.div
     initial={{ x: -2008, opacity: 0.9 }} // Start slightly off-screen left
     animate={fadeIn ? { x: 0, opacity: 1 } : { x: 0, opacity: 0.9 }} // Animate based on fadeIn state
     transition={{ duration: .5, ease: "easeInOut" }} // Smooth transition
-    className="bg-[#090707] w-screen min-h-screen lg:min-h-screen flex flex-col "
+    className="bg-gradient-to-br from-[#0d0d0d] via-[#1a1a1a] to-[#000000]  w-screen min-h-screen lg:min-h-screen flex flex-col "
   >
      <div
     className={`fixed z-40 top-0  left-0 h-full w-48 bg-[#0a0606] border-r border-gray-700 transform transition-transform duration-300 ${

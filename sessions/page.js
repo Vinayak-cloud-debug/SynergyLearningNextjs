@@ -98,12 +98,12 @@ export default function  Sessions () {
 
 <ProtectedRoute redirectTo = '/'>
 
-<div className="w-screen h-screen bg-[#090707] ">
+<div className="w-screen h-screen bg-gradient-to-br from-[#0d0d0d] via-[#1a1a1a] to-[#000000] ">
   <motion.div
       initial={{ x: -2008, opacity: 0.9 }} // Start slightly off-screen left
       animate={fadeIn ? { x: 0, opacity: 1 } : { x: 0, opacity: 0.9 }} // Animate based on fadeIn state
       transition={{ duration: .5, ease: "easeInOut" }} // Smooth transition
-      className="bg-black min-h-screen w-full flex flex-row md:flex-row  justify-center  border-r border-[#645D5D] "
+      className="bg-gradient-to-br from-[#0d0d0d] via-[#1a1a1a] to-[#000000]  min-h-screen w-full flex flex-row md:flex-row  justify-center  border-r border-[#645D5D] "
     >
 
 

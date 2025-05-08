@@ -214,16 +214,16 @@ useEffect(() => {
 <ProtectedRoute redirectTo = '/'>
 
 
-      <div className="w-screen h-screen bg-[#090707] overflow-auto">
+      <div className="w-screen h-screen bg-gradient-to-br from-[#0d0d0d] via-[#1a1a1a] to-[#000000]  overflow-auto">
         <motion.div
           initial={{ x: -2008, opacity: 0.9 }}
           animate={fadeIn ? { x: 0, opacity: 1 } : { x: 0, opacity: 0.9 }}
           transition={{ duration: 0.5, ease: 'easeInOut' }}
-          className="bg-black min-h-screen w-full flex flex-col md:flex-row border-r border-[#645D5D]"
+          className="bg-gradient-to-br from-[#0d0d0d] via-[#1a1a1a] to-[#000000]  min-h-screen w-full flex flex-col md:flex-row border-r border-[#645D5D]"
         >
 
 <div
-    className={` z-40 top-0 fixed left-0  h-full w-48 bg-[#0a0606] border-r border-gray-700 transform transition-transform duration-300 ${
+    className={` z-40 top-0 fixed left-0  h-full w-48 bg-gradient-to-br from-[#0d0d0d] via-[#1a1a1a] to-[#000000]  border-r border-gray-700 transform transition-transform duration-300 ${
       sidebarOpen ? 'translate-x-0' : '-translate-x-full'
     }`}>
      <div className="p-2 border-b  border-gray-600 mt-3 flex justify-between items-center">
@@ -331,8 +331,6 @@ useEffect(() => {
                                                 </div>
                 </div>
 
-           
-            {/* Content */}
 
 <div className="flex flex-col  gap-10 lg:ml-[270px] px-4">
   <div className="flex flex-col  lg:ml-20 flex-1 mt-[80px] md:mt-[20px] md:ml-[80px]  px-2 overflow-auto">
@@ -340,8 +338,9 @@ useEffect(() => {
       <div className={`transition-all duration-700 ease-in-out ${fadeIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
         {CSRelatedPdf.map((pdf) =>
           pdf.Modules.length ? (
+
             <div key={pdf.SubjectNumber} className="my-4">
-              <div className="flex flex-col gap-2 w-full max-w-[800px] bg-[#110d0d] border-2 border-[#e65036] rounded-lg shadow-lg p-4 mx-auto">
+              <div className="flex flex-col gap-2 w-full max-w-[800px] bg-[#110d0d] border-2 border-[#1b1918] rounded-lg shadow-lg p-4 mx-auto">
                 <div onClick={() => handleToggle(pdf.SubjectNumber)} className="flex cursor-pointer justify-between items-center w-full">
                   <div className={`text-center flex-1 break-words overflow-hidden whitespace-normal ${dropdown ? 'text-[#e65036] font-bold' : 'text-white'}`}>
                     {pdf.SubjectName}
@@ -359,7 +358,7 @@ useEffect(() => {
                   </div>
                 </div>
                 <div className="w-full overflow-x-auto mt-5">
-                  <div className={`min-w-[500px] sm:min-w-[680px] transition-all duration-700 ease-in-out bg-black ${dropdown ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                  <div className={`min-w-[500px] sm:min-w-[680px] transition-all duration-700 ease-in-out bg-gradient-to-br from-[#0f0f0f] via-[#050404] to-[#000000] k ${dropdown ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}>
                     <table className="table-auto w-full text-white text-xs sm:text-sm md:text-base">
                       <thead>
                         <tr className="border-2 border-[#161313]">

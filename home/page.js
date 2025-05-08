@@ -8,6 +8,7 @@ import {useAuthContext} from '../context/AuthContext';
 import Login from '../login/page';
 import LogOut from '../LogOut/page';
 import { set } from 'mongoose';
+import axios from 'axios';
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -48,7 +49,7 @@ export default function Home() {
     {text:'Grow',color:'yellow'},
     {text:'Excel',color:'purple'},
     {text:'Master',color:'orange'},
-    {text:'Succeed',color:'green'},
+    {text:'Succeed',color:'lightgreen'},
     {text:'Conquer',color:'cyan'},
     {text:'Inspire',  color:'magenta'},
     {text:'Innovate',color:'yellow'},
@@ -222,10 +223,74 @@ animation: slideOut 0.2s ease-in forwards; /* Slide out to the bottom */
       setOnClickLogin(!onClickLogin);
     }
 
+    const payNow = async () => {
+      const amount = 50000; // in paise (₹500.00)
+      const currency = 'INR';
+    
+      try {
+        // Step 1: Create Razorpay order on your backend
+        const orderResponse = await axios.post('/api/createOrder', {
+          amount,
+          currency,
+        });
+    
+        const { orderId } = orderResponse.data;
+    
+        // Step 2: Setup Razorpay Checkout options
+        const options = {
+          key: 'rzp_test_FRoCXFr2FkZqrx', // <-- Public Razorpay Key (NEEDS TO BE PASSED)
+          amount,
+          currency,
+          name: 'jFork Technology Services',
+          description: 'Training and Project Guidance Services',
+          order_id: orderId,
+          handler: async (response) => {
+            console.log('Razorpay handler response:', response);
+    
+            try {
+              // Step 3: Capture payment on your backend
+              const captureResponse = await axios.post('/api/payment', {
+                paymentId: response.razorpay_payment_id,
+                amount,
+                currency,
+              });
+    
+              if (captureResponse.data.success) {
+                console.log('✅ Payment captured successfully.');
+              } else {
+                console.log('❌ Payment failed or not captured.');
+              }
+            } catch (error) {
+              console.error('❌ Error capturing payment:', error);
+            }
+          },
+          prefill: {
+            name: 'Sunil Rodd',
+            email: 'sfroddjforkts@gmail.com',
+            contact: '9480275919',
+          },
+          theme: {
+            color: '#3498db',
+          },
+        };
+    
+        // Step 4: Open Razorpay modal
+        const razorpayInstance = new window.Razorpay(options);
+        razorpayInstance.open();
 
-
+      } catch (error) {
+        console.error('❌ Error creating order:', error);
+      }
+    };
+    
+    
   return (
-    <div className="bg-[#090707] z-10  w-screen min-h-screen lg:min-h-screen flex flex-col items-center overflow-hidden px-4">
+
+      
+
+
+
+    <div className="z-10 bg-gradient-to-br from-[#0d0d0d] via-[#1a1a1a] to-[#000000]  w-screen min-h-screen lg:min-h-screen flex flex-col items-center overflow-hidden px-4">
 
 
 
@@ -259,9 +324,15 @@ animation: slideOut 0.2s ease-in forwards; /* Slide out to the bottom */
         <div className='flex flex-row gap-3'>
         {!authUser?
 
-                  
-          <div onClick={handleLogin} className='lg:w-[120px] cursor-pointer lg:h-[40px] lg:mt-1 lg:mr-5 w-[80px] h-[45px] flex flex-row gap-1.5 lg:gap-3 items-center justify-center p-2 rounded-lg bg-[#d72c2c]'>
-          <h1 className='text-white text-center font-medium text-base lg:text-lg'>Login</h1>
+
+          <div className='flex flex-row gap-2'>
+            <div onClick={handleLogin} className='lg:w-[120px] cursor-pointer lg:h-[40px] lg:mt-1 lg:mr-5 w-[80px] h-[45px] flex flex-row gap-1.5 lg:gap-3 items-center justify-center p-2 rounded-lg bg-[#d72c2c]'>
+            <h1 className='text-white text-center font-serif text-base lg:text-lg'>Login</h1>
+            </div>
+
+            <div onClick={payNow} className='lg:w-[120px] cursor-pointer lg:h-[40px] lg:mt-1 lg:mr-5 w-[100px] h-[45px] flex flex-row gap-1.5 lg:gap-3 items-center justify-center p-2 rounded-lg bg-[#d72c2c]'>
+            <h1 className='text-white text-center font-serif text-base lg:text-lg'>Buy Now</h1>
+            </div>
           </div>
 
           :
@@ -274,7 +345,7 @@ animation: slideOut 0.2s ease-in forwards; /* Slide out to the bottom */
                     <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" className="bi bi-ui-checks-grid w-[20px] h-[20px]" viewBox="0 0 16 16">
                       <path d="M2 10h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1m9-9h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1m0 9a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1zm0-10a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM2 9a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2zm7 2a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2zM0 2a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm5.354.854a.5.5 0 1 0-.708-.708L3 3.793l-.646-.647a.5.5 0 1 0-.708.708l1 1a.5.5 0 0 0 .708 0z"/>
                     </svg>
-                        <h1 className='text-white text-center font-medium text-xs lg:text-xl'>Dashboard</h1>
+                        <h1 className='text-white text-center font-serif text-xs lg:text-xl'>Dashboard</h1>
                     </div>
               </Link>
 
@@ -282,6 +353,7 @@ animation: slideOut 0.2s ease-in forwards; /* Slide out to the bottom */
                           
                 <LogOut   />
               </div>
+              
             </div>
 
         }
@@ -364,7 +436,7 @@ animation: slideOut 0.2s ease-in forwards; /* Slide out to the bottom */
   index === currentSloganIndex ? (
     <div 
       key={index} 
-      className='text-center text-white text-lg lg:text-5xl mt-10 lg:w-[1300px] font-mono mb-6 md:mb-10 h-[80px] md:h-[100px]'
+      className='text-center text-white text-lg lg:text-5xl mt-10 lg:w-[1300px] font-sans mb-6 md:mb-10 h-[80px] w-full md:h-[100px]'
     >
       Together We Believe, Together We <span
       className={`${
@@ -379,7 +451,7 @@ animation: slideOut 0.2s ease-in forwards; /* Slide out to the bottom */
 
 
       {/* Mentors Section */}
-      <div className='flex flex-col justify-center items-center w-[400px] lg:w-[1200px] h-[550px] bg-[#110b0b] rounded-2xl'>
+      <div className='flex flex-col justify-center items-center w-[400px] lg:w-[1200px] h-[550px] bg-[#110b0b]  rounded-2xl'>
         <div className='flex flex-row w-[400px] lg:w-[1187px] h-10 justify-between'>
           <button
             onClick={goToPrevious}
@@ -428,15 +500,105 @@ animation: slideOut 0.2s ease-in forwards; /* Slide out to the bottom */
     
       <div className='flex flex-col lg:flex-row  gap-10 lg:gap-44 w-[400px] h-[860px] lg:w-[1200px] mt-28 lg:h-[500px] rounded-2xl bg-[#120c0c] justify-center items-center'>
         <div className='flex flex-col gap-10'>
-          <h1 className='text-[#f03232] font-semibold text-2xl  text-left'>Features</h1>
+          <h1 className='text-red-700 font-semibold text-2xl  text-left'>Features</h1>
           <div className='flex flex-col gap-4'>
+            <div className='flex flex-row gap-4'>
+                <span
+                        style={{
+                          width: '10px',
+                          height: '10px',
+                          backgroundColor: 'red',
+                          transform: 'rotate(45deg)',
+                          display: 'inline-block',
+                          marginTop: '4px',
+                        }}
+                />
             <span className='text-white font-medium  text-sm text-left'>Curated Lectures and Notes</span>
-            <span className='text-white font-medium text-sm text-left'>In-Depth Explanation in the Articles</span>
+            </div>
+
+            <div className='flex flex-row gap-4'>
+                <span
+                        style={{
+                          width: '10px',
+                          height: '10px',
+                          backgroundColor: 'red',
+                          transform: 'rotate(45deg)',
+                          display: 'inline-block',
+                          marginTop: '4px',
+                        }}
+                />
             <span className='text-white font-medium text-sm text-left'>Session Videos Bi-Weekly</span>
+            </div>
+
+            <div className='flex flex-row gap-4'>
+                <span
+                        style={{
+                          width: '10px',
+                          height: '10px',
+                          backgroundColor: 'red',
+                          transform: 'rotate(45deg)',
+                          display: 'inline-block',
+                          marginTop: '4px',
+                        }}
+                />
             <span className='text-white font-medium text-sm text-left'>Mentoring Sessions</span>
+            </div>
+
+            <div className='flex flex-row gap-4'>
+                <span
+                        style={{
+                          width: '10px',
+                          height: '10px',
+                          backgroundColor: 'red',
+                          transform: 'rotate(45deg)',
+                          display: 'inline-block',
+                          marginTop: '4px',
+                        }}
+                />
             <span className='text-white font-medium text-sm text-left'>11th and 12th Dedicated Live Classes</span>
+            </div>
+
+            <div className='flex flex-row gap-4'>
+                <span
+                        style={{
+                          width: '10px',
+                          height: '10px',
+                          backgroundColor: 'red',
+                          transform: 'rotate(45deg)',
+                          display: 'inline-block',
+                          marginTop: '4px',
+                        }}
+                />
             <span className='text-white font-medium text-sm text-left'>Doubt Support</span>
+            </div>
+
+            <div className='flex flex-row gap-4'>
+                <span
+                        style={{
+                          width: '10px',
+                          height: '10px',
+                          backgroundColor: 'red',
+                          transform: 'rotate(45deg)',
+                          display: 'inline-block',
+                          marginTop: '4px',
+                        }}
+                />
             <span className='text-white font-medium text-sm text-left'>Discord Community</span>
+            </div>
+
+            <div className='flex flex-row gap-4'>
+                <span
+                        style={{
+                          width: '10px',
+                          height: '10px',
+                          backgroundColor: 'red',
+                          transform: 'rotate(45deg)',
+                          display: 'inline-block',
+                          marginTop: '4px',
+                        }}
+                />
+            <span className='text-white font-medium text-sm text-left'>In-Depth Explanation in the Articles</span>
+            </div>
           </div>
         </div>
 
@@ -497,14 +659,14 @@ animation: slideOut 0.2s ease-in forwards; /* Slide out to the bottom */
       
       {Testimonials.map((testimonial, index) => (
 
-      <div key={index} className='bg-[#12161b] lg:justify-center lg:items-center flex flex-col h-[360px] lg:h-[340px] gap-5 rounded-2xl transition-transform duration-500   ' style={{
+      <div key={index} className='bg-[#12161b] lg:justify-center shadow-2xl lg:items-center flex flex-col h-[360px] lg:h-[340px] gap-5 rounded-2xl transition-transform duration-500   ' style={{
         transform: `translateX(-${currentTestimonial * 100}%)`,
       }}>
-        <div className='flex flex-row w-[380px] lg:w-[440px]  h-[100px]  gap-16'>
+        <div className='flex flex-row w-[380px] lg:w-[440px] shadow-2xl   h-[100px]  gap-16'>
 
           <Image src={testimonial.image} width={70} height={70} alt={`Image ${index + 1}`} className='w-[70px] h-[70px] mt-5 ml-5 rounded-full' />
           <div className='flex flex-col mt-5 gap-2'>
-              <h1 className='text-[#d54521] font-bold text-lg lg:text-2xl'>Ruhi Shanbag</h1>
+              <h1 className='text-[#e30606] font-bold text-lg lg:text-2xl'>Ruhi Shanbag</h1>
               <h1 className='text-[#ffffff] font-medium text-base lg:text-lg'>4 Year Course Student</h1>
           </div>
         </div>
@@ -528,63 +690,104 @@ animation: slideOut 0.2s ease-in forwards; /* Slide out to the bottom */
       <ComparisonPage/>
     </div>
 
-    <footer className="bg-[#060202] mt-20 w-screen   justify-start items-start transition-all duration-700 ease-in-out animate-fade-in-slide-up h-auto lg:h-[480px] flex flex-col lg:flex-row gap-5 lg:gap-[50px] p-5  overflow-hidden">
-      <div className="flex flex-col gap-3 mt-0 w-screen items-center justify-center lg:w-[300px]">
-        <img src='/SynergyNewIcon.png' alt="Logo" width={70} height={70} className="self-center rounded-full mt-2 " />
-        <div className=" text-sm md:text-md mr-6 lg:mr-0  sm:w-32 font-instrument text-center font-semibold text-[#9A9494] ">
-          Best Place to Master Physics Chemistry and Mathematics.
-        </div>
+   
 
-        
+<footer className="w-full lg:w-screen mt-20 bg-gradient-to-br from-[#0d0d0d] via-[#1a1a1a] to-[#000000] text-white transition-all duration-700 ease-in-out animate-fade-in-slide-up p-6 lg:p-10 lg:h-[480px]">
+  <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 h-full items-start">
+    {/* Logo & Tagline (1st column) */}
+    <div className="flex flex-col items-center lg:items-start justify-start gap-4">
+      <img
+        src="/SynergyNewIcon.png"
+        alt="Logo"
+        width={70}
+        height={70}
+        className="rounded-full"
+      />
+      <p className="text-[#B0AAAA] text-sm md:text-md font-medium leading-snug text-center lg:text-left">
+        Best Place to Master Physics, Chemistry and Mathematics.
+      </p>
+    </div>
+
+    {/* Quick Links (2nd column) */}
+    <div className="flex flex-col justify-start gap-3">
+      <h1 className="text-orange-400 text-lg font-semibold md:text-xl">Quick Links</h1>
+      {[
+        { label: 'Company', href: '/about' },
+        { label: 'About', href: '/about' },
+        { label: 'Contact', href: '/Contact' },
+        { label: 'Privacy Policy', href: '/PrivacyPolicy' },
+        { label: 'Terms And Conditions', href: '/Tnc' },
+        { label: 'Notes', href: '/notes' },
+      ].map(({ label, href }) => (
+        <Link
+          key={label}
+          href={href}
+          className="text-white text-base md:text-lg font-medium transition-all duration-200 hover:underline hover:text-orange-500 hover:pl-2"
+        >
+          {label}
+        </Link>
+      ))}
+    </div>
+
+    {/* Navigate To (3rd column) */}
+    <div className="flex flex-col justify-start gap-3">
+      <h1 className="text-orange-400 text-lg font-semibold md:text-xl">Navigate To</h1>
+      {[
+        { label: 'Activities', href: '/CSCluster' },
+        { label: 'Mentorship Programs', href: '/ECCluster' },
+        { label: 'Sessions', href: '/ECCluster' },
+      ].map(({ label, href }) => (
+        <Link
+          key={label}
+          href={href}
+          className="text-white text-base md:text-lg font-medium transition-all duration-200 hover:underline hover:text-red-500 hover:pl-2"
+        >
+          {label}
+        </Link>
+      ))}
+    </div>
+
+    {/* Socials (4th column) */}
+    <div className="flex flex-col justify-start gap-3">
+      <h1 className="text-orange-400 text-lg font-semibold md:text-xl">Follow Us On</h1>
+      <div className="flex flex-row justify-start items-center gap-3">
+        <Image
+          src="/instagram-logo-instagram-icon-transparent-free-png 1.svg"
+          alt="instagram"
+          width={50}
+          height={50}
+          className="w-10 h-10 md:w-12 md:h-14 object-contain"
+        />
+        <Image
+          src="/linkedin-logo-linkedin-icon-transparent-free-png 1.svg"
+          alt="linkedIn"
+          width={50}
+          height={50}
+          className="w-10 h-10 md:w-12 md:h-14 object-contain"
+        />
+        <Image
+          src="/youtube-icon-512x511-vupixj7v-removebg-preview 1.svg"
+          alt="youtube"
+          width={50}
+          height={50}
+          className="w-10 h-10 md:w-12 md:h-14 object-contain"
+        />
       </div>
+    </div>
 
-
-      
-          <div className="flex flex-col gap-[15px] w-full lg:w-[300px] ">
-            <h1 className="text-[#0B02FF]   text-lg font-semibold md:text-xl mt-[10px] lg:mt-[30px]">Quick Links</h1>
-            <div className="flex flex-col gap-[20px]">
-              <Link href="/about" className=" text-white text-base font-medium md:text-lg cursor-pointer">Company</Link>
-              <Link href="/about" className="text-white text-base font-medium  md:text-lg cursor-pointer">About</Link>
-              <Link href="/Contact" className="text-white text-base font-medium  md:text-lg cursor-pointer">Contact</Link>
-              <Link href="/PrivacyPolicy" className="text-white font-medium  text-base md:text-lg cursor-pointer">Privacy Policy</Link>
-              <Link href="/Tnc" className="text-white text-base md:text-lg cursor-pointer">Terms And Conditions</Link>
-              <Link href="/notes" className="text-white text-base md:text-lg cursor-pointer">Notes</Link>
-          
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-[17px] w-full lg:w-[200px]">
-            <h1 className="text-[#0B02FF] text-lg font-semibold md:text-xl mt-[10px] lg:mt-[30px]">Navigate To</h1>
-            <div className="flex flex-col gap-[18px]">
-              <Link href="/CSCluster"  className="text-white font-medium text-base md:text-lg cursor-pointer">Activities</Link>
-              <Link href="/ECCluster" className="text-white font-medium text-base md:text-lg cursor-pointer">Mentorship Programs</Link>
-              <Link href="/ECCluster" className="text-white font-medium text-base md:text-lg cursor-pointer">Sessions</Link>
-
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-[15px] w-full lg:w-[200px] items-start">
-            <h1 className="text-[#0B02FF] text-lg font-semibold md:text-xl mt-[10px] lg:mt-[30px]">
-              Follow Us On
-            </h1>
-            <div className="flex flex-row items-center gap-3">
-              <Image src= '/instagram-logo-instagram-icon-transparent-free-png 1.svg' alt='instagram' width={50} height={50} className="w-10 h-10 md:w-12 md:h-14 object-contain" />
-              <Image src='/linkedin-logo-linkedin-icon-transparent-free-png 1.svg' alt='linkedIn' width={50} height={50} className="w-10 h-10 md:w-12 md:h-14 object-contain" />
-              <Image src='/youtube-icon-512x511-vupixj7v-removebg-preview 1.svg' alt='youtube' width={50} height={50} className="w-10 h-10 md:w-12 md:h-14 object-contain" />
-            </div>
-          </div>
-
-
-          <div className="flex flex-row items-center gap-2  lg:mt-8">
-            <i className="bi bi-c-circle text-white text-base md:text-lg"></i>
-            <h1 className="text-white font-medium  text-sm md:text-lg leading-none">
-              2025 by <span className="text-[#0B02FF] font-semibold">Synergy Learning</span>
-            </h1>
-          </div>
+    {/* Synergy Learning 2025 (5th column) */}
+    <div className="flex flex-col lg:flex-row items-center lg:items-start gap-3 text-center lg:text-left mt-8 lg:mt-0">
+      <i className="bi bi-c-circle text-white text-sm md:text-lg"></i>
+      <h1 className="text-white font-medium text-sm md:text-lg leading-none">
+        2025 by <span className="text-orange-400 font-semibold">Synergy Learning</span>
+      </h1>
+    </div>
+  </div>
+</footer>
 
 
 
-        </footer>
+
 
     </div>
   );
